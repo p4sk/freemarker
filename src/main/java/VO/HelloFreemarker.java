@@ -1,8 +1,8 @@
 package main.java.VO;
 
 import java.io.IOException;
-import java.util.ArrayList;
-
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -12,53 +12,60 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 
 import main.java.BO.Utente;
+import utils.Utils;
 
-/**
- * Servlet implementation class HelloFreemarker
- */
-@WebServlet("/HelloFreemarker")
+@WebServlet("/hellofreemarker")
 public class HelloFreemarker extends HttpServlet {
-	
+
 	static final Logger logger = LogManager.getLogger(HelloFreemarker.class.getName());
-	
+
 	private static final long serialVersionUID = 1L;
 
-	/**
-	 * @see HttpServlet#HttpServlet()
-	 */
+	Utils utils = new Utils();
+
+	Utente utente = new Utente("","");
+
 	public HelloFreemarker() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
-	
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-//		// TODO Auto-generated method stub
 
-	    logger.info("Inside Hello Logger!");
-	    
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
 		// creo la lista di utenti
-		ArrayList<Utente> listaUtenti = new ArrayList<Utente>();
+		LinkedList<Utente> listaUtenti = new LinkedList<Utente>();
+
+		logger.info("Inizio");
 		
-		listaUtenti.add(new  Utente("Pasquale Costanzo","Developers"));
-		listaUtenti.add(new  Utente("Michele Molinari","Developers"));
-		 
+		JSONArray jArr = (JSONArray)utils.doCall("http://jsonplaceholder.typicode.com/users", "GET", null);
+		
+		Iterator<?> iterator = jArr.iterator();
+		JSONObject jOb = new JSONObject();
+		
+		while (iterator.hasNext()) {
+			jOb=(JSONObject) iterator.next();
+			String name = (String)jOb.get("name");
+			Utente utente = new Utente(name, null);
+			logger.info("UTENTE: " +utente.getNome());
+			listaUtenti.add(utente);
+		}
+		logger.info("ListaUtenti: " +listaUtenti);
+		
 		//Put the user list in request and let freemarker paint it.
 		request.setAttribute("utenti", listaUtenti);
+
 		request.getRequestDispatcher("/index.ftl").forward(request, response);
 
+		logger.info("Fine");
 	}
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+
+		request.getRequestDispatcher("/error.ftl").forward(request, response);
+
 	}
-	
+
 }
