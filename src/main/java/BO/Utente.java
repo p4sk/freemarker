@@ -1,8 +1,22 @@
 package main.java.BO;
 
+/**
+ * 
+ * @author Pasquale
+ *
+ */
+
 public class Utente {
 
+
 	private String nome, lavoro;
+	
+	
+	/**
+	 * 
+	 * @param nome dell'utente
+	 * @param lavoro dell'utente
+	 */
 	
 	public Utente(String nome, String lavoro) {
 		super();

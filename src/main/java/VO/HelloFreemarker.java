@@ -34,7 +34,7 @@ public class HelloFreemarker extends HttpServlet {
 	}
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+	
 		// creo la lista di utenti
 		LinkedList<Utente> listaUtenti = new LinkedList<Utente>();
 
@@ -45,6 +45,9 @@ public class HelloFreemarker extends HttpServlet {
 		Iterator<?> iterator = jArr.iterator();
 		JSONObject jOb = new JSONObject();
 		
+		/*
+		 * Itero la response e recupero il name 
+		 */
 		while (iterator.hasNext()) {
 			jOb=(JSONObject) iterator.next();
 			String name = (String)jOb.get("name");
@@ -54,12 +57,20 @@ public class HelloFreemarker extends HttpServlet {
 		}
 		logger.info("ListaUtenti: " +listaUtenti);
 		
-		//Put the user list in request and let freemarker paint it.
+		/*
+		 * Setto la lista degli utenti nella request e la visualizzo tramite freemarker.
+		 */
+		Utente u = new Utente("Pask", "Programmatore");
+		request.setAttribute("provaUtente", u);
+		
 		request.setAttribute("utenti", listaUtenti);
 
 		request.getRequestDispatcher("/index.ftl").forward(request, response);
 
+		
+		
 		logger.info("Fine");
+		logger.info("*****");
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

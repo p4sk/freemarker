@@ -25,7 +25,12 @@ public class Utils {
 
 	static final Logger logger = LogManager.getLogger(HelloFreemarker.class.getName());
 
-	public String getProperties( String prop ){
+	/**
+	 * Questo metodo prende in input uno username e ritorna il  tipo di ambiente settato nel config.properties
+	 * @param username
+	 * @return
+	 */
+	public String getProperties( String username ){
 
 		Properties props = new Properties();
 		InputStream inputStream = null;
@@ -45,9 +50,9 @@ public class Utils {
 			}
 
 			if(ambiente == "local" || ambiente == null) {
-				property = "local."+prop;
+				property = "local."+username;
 			}else{
-				property = ambiente + "." +prop;
+				property = ambiente + "." +username;
 			}
 
 		} catch (Exception e) {
@@ -64,19 +69,22 @@ public class Utils {
 
 	}
 
-
+	/**
+	 * Questo metodo ritorna un object dalla myUrl passatagli in input 
+	 * @param myUrl
+	 * @param methode (GET o POST)
+	 * @param content (null o json o xml)
+	 * @return
+	 * @throws IOException
+	 */
 	public Object doCall(String myUrl, String methode, String content) throws IOException{
 
 		URL url = new URL(myUrl);
 
 		HttpURLConnection connection = null;
 
-		Object a = null ;
-		
-		JSONObject aJ = new JSONObject();
-		
-		XMLObject aX = null;
-		 
+		Object object = null ;
+		XMLObject xmlObject = null;
 
 		try {
 			connection = (HttpURLConnection) url.openConnection();
@@ -89,13 +97,11 @@ public class Utils {
 				connection.setRequestProperty("Content-Type", "application/xml"); 
 			}
 
-			// devo settare lo User-Agent per evitare un HTTP error code 403
+			// setto lo User-Agent per evitare un HTTP error code 403
 			connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
 
 			connection.setRequestProperty("charset", "utf-8");
 			connection.connect();
-
-			//            logger.info(connection.getContentType());
 
 			if (connection.getResponseCode() != 200) {
 				throw new RuntimeException("Failed : HTTP error code : " + connection.getResponseCode());
@@ -122,14 +128,13 @@ public class Utils {
 			Iterator<?> iterator = msg.iterator();
 
 			if(content == null || content == "json"){
-				a = getObjectContent(a, iterator);
-				logger.error("a: " +a);
+				object = getObjectContent(object, iterator);
 			}
 			else if(content == "xml"){
-				aX = getXMLContent(aX, iterator);
+				xmlObject = getXMLContent(xmlObject, iterator);
 			}
 			else{
-				
+				return null;
 			}
 
 		} catch (Exception e) {
@@ -138,24 +143,24 @@ public class Utils {
 			connection.disconnect();
 		}
 
-		return a;
+		return object;
 
 	}
-	public JSONArray getObjectContent(Object a, Iterator<?> iterator){
+	public JSONArray getObjectContent(Object o, Iterator<?> iter){
 		JSONArray list = new JSONArray();
-		while (iterator.hasNext()) {
-			a=iterator.next();
-			list.add(a);
+		while (iter.hasNext()) {
+			o=iter.next();
+			list.add(o);
 		}
 		return list;
 	}
 	
 
-	public XMLObject getXMLContent(XMLObject aX, Iterator<?> iterator){
-		while (iterator.hasNext()) {
-			aX=(XMLObject)iterator.next();
+	public XMLObject getXMLContent(XMLObject xmlObj, Iterator<?> iter){
+		while (iter.hasNext()) {
+			xmlObj=(XMLObject)iter.next();
 		}
-		return aX;
+		return xmlObj;
 	}
 
 }

@@ -14,7 +14,17 @@
 		<welcome-file>default.htm</welcome-file>
 		<welcome-file>default.jsp</welcome-file>
 	</welcome-file-list>
+
+	<filter-mapping>
+		<filter-name>LoggerFilter</filter-name>
+		<url-pattern>/hellofreemarker</url-pattern>
+	</filter-mapping>
 	
+	<filter-mapping>
+		<filter-name>AuthFilter</filter-name>
+		<url-pattern>/hellofreemarker</url-pattern>
+	</filter-mapping>
+
 	<servlet>
 		<servlet-name>freemarker</servlet-name>
 		<servlet-class>freemarker.ext.servlet.FreemarkerServlet</servlet-class>
@@ -49,15 +59,14 @@
 
 		<load-on-startup>1</load-on-startup>
 	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>freemarker</servlet-name>
-		<url-pattern>*.ftl</url-pattern>
-	</servlet-mapping>
-	
+
 	<servlet>
 		<servlet-name>HelloFreemarker</servlet-name>
 		<servlet-class>servlet.HelloFreemarker</servlet-class>
 	</servlet>
 
+	<servlet-mapping>
+		<servlet-name>freemarker</servlet-name>
+		<url-pattern>*.ftl</url-pattern>
+	</servlet-mapping>
 </web-app>
